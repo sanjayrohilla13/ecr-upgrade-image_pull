@@ -15,19 +15,7 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            steps {
-               // sh 'make docker-build'
-               sh 'docker build -t centos-repo .'
-            echo 'Building....'
-            }
-        }    
-        stage('Scan') {
-            steps {
-                echo 'Scanning....'
-            }
-        }    
-
+        // Login in AWS ECR for getting Authentication Token
         stage('Docker Login') {
             steps {
                 withCredentials([aws(accessKeyVariable:'AWS_ACCESS_KEY_ID',credentialsId:'srv-ecr-usr',secretKeyVariable:'AWS_SECRET_ACCESS_KEY')]) {
@@ -35,20 +23,17 @@ pipeline {
                 //sh 'make docker-login'
                 echo 'Logging in..'
                 sh '''
-                aws --version
-                aws ec2 describe-instances
-                aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 240979667302.dkr.ecr.ap-southeast-2.amazonaws.com
+                    aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 240979667302.dkr.ecr.ap-southeast-2.amazonaws.com
                 '''
                 }    
             }
         }
 
-        stage('Push to ECR') {
+        stage('Pull ECR Image') {
             steps {
                 echo 'Pushing to ECR....'
                 sh '''
-                    docker tag centos-repo:latest 240979667302.dkr.ecr.ap-southeast-2.amazonaws.com/centos-repo:latest
-                    docker push 240979667302.dkr.ecr.ap-southeast-2.amazonaws.com/centos-repo:latest
+                    docker pull 240979667302.dkr.ecr.ap-southeast-2.amazonaws.com/centos-repo:latest
                 '''
             }
         }
