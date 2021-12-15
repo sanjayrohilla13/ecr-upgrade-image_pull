@@ -11,7 +11,7 @@ pipeline {
                 echo 'Downloading..'
                 script {
                     git credentialsId: 'sanjayrohilla13', branch: 'ecr-login-with-authcode', url: 'https://github.com/sanjayrohilla13/ecr-upgarde.git', poll: false
-                }
+               }
             }
         }
 
