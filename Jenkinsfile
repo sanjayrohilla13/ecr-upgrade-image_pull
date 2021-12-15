@@ -10,7 +10,7 @@ pipeline {
             steps {
                 echo 'Downloading..'
                 script {
-                    git credentialsId: 'sanjayrohilla13', branch: 'master', url: 'https://github.com/sanjayrohilla13/ecr-upgarde.git', poll: false
+                    git credentialsId: 'sanjayrohilla13', branch: 'ecr-login-with-authcode', url: 'https://github.com/sanjayrohilla13/ecr-upgarde.git', poll: false
                 }
             }
         }
@@ -23,7 +23,12 @@ pipeline {
                 //sh 'make docker-login'
                 echo 'Logging in..'
                 sh '''
-                    aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 240979667302.dkr.ecr.ap-southeast-2.amazonaws.com
+                    aws --version
+                    aws_account_id="240979667302"
+                    aws_region="ap-southeast-2"
+                    ecr_url="${aws_account_id}.dkr.ecr.${aws_region}.amazonaws.com"
+                    password="$(aws ecr get-authorization-token --region "${aws_region}" --output text --query 'authorizationData[].authorizationToken' | base64 -d | cut -d: -f2 )"
+                    echo "$password | docker login --password-stdin --username AWS "$ecr_url" 
                 '''
                 }    
             }
