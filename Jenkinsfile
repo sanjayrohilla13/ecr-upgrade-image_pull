@@ -27,10 +27,8 @@ pipeline {
                     aws_account_id="240979667302"
                     aws_region="ap-southeast-2"
                     ecr_url="${aws_account_id}.dkr.ecr.${aws_region}.amazonaws.com"
-                    password="$(aws ecr get-authorization-token --region "${aws_region}" --output text \
-                    --query 'authorizationData[].authorizationToken' | base64 -d | cut -d: -f2 )"
-
-                    echo "$password | docker login --password-stdin --username AWS "$ecr_url" 
+                    password="$(aws ecr get-authorization-token --region "${aws_region}" --output text --query 'authorizationData[].authorizationToken' | base64 -d | cut -d: -f2 )"
+                    echo "$password" | docker login --password-stdin --username AWS "$ecr_url" 
                 '''
                 }    
             }
