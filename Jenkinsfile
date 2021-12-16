@@ -38,7 +38,7 @@ pipeline {
             steps {
                 echo 'Pushing to ECR....'
                 sh '''
-                    docker pull 240979667302.dkr.ecr.ap-southeast-2.amazonaws.com/centos-repo:latest
+                    docker push 240979667302.dkr.ecr.ap-southeast-2.amazonaws.com/centos:latest
                 '''
             }
         }
